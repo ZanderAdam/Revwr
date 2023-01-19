@@ -16,6 +16,27 @@ function selectLine(event) {
     selElem.checked = true;
 }
 
+function getReview(selectedCode) {
+    fetch('http://localhost:3000/review', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                code: selectedCode
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            var displayElem = document.getElementById('parsed-lines')
+            displayElem.innerHTML = data.review.text
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
 function toggleSidebar() {
     if (sidebarOpen) {
         var el = document.getElementById('side-panel');
@@ -61,6 +82,7 @@ function toggleSidebar() {
                 selectedLines.push(dataElem.attributes['data-original-line'].value)
             })
             parsedLines.innerHTML = selectedLines.join('<br>')
+            getReview(selectedLines.join('\n'))
         })
         document.body.appendChild(sidePanel);
         sidebarOpen = true;
