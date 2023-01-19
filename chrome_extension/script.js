@@ -1,11 +1,9 @@
-function handleRequest(
-    request,
-    sender, sendResponse
-) {
-    if (request.callFunction == "toggleSidebar")
-        toggleSidebar();
+function handleRequest(request, sender, sendResponse) {
+    if (request === "toggle")
+        toggleSidebar()
 }
-chrome.extension.onRequest.addListener(handleRequest);
+
+chrome.runtime.onMessage.addListener(handleRequest);
 
 var sidebarOpen = false;
 var isSelectMode = false;
