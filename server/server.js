@@ -1,12 +1,12 @@
 const express = require('express');
-
+const showdown = require('showdown');
 const {
     Configuration,
     OpenAIApi
 } = require("openai");
 
 const configuration = new Configuration({
-    apiKey: 'sk-',
+    apiKey: process.env.OPENAI_API_KEY,
 });
 
 const app = express();
@@ -22,6 +22,8 @@ app.use(function (req, res, next) {
     }
 });
 
+const converter = new showdown.Converter()
+
 app.post('/review', async (req, res) => {
     console.log(req)
     const {
@@ -31,19 +33,23 @@ app.post('/review', async (req, res) => {
     const openai = new OpenAIApi(configuration);
     const completion = await openai.createCompletion({
         model: "text-davinci-003",
-        prompt: `Explain the following pull request diff. Formt output as markdown.
-        Use following sections (parenthesis describe what this section is about - do not output)
-        Explanation (explain the diff)
-        Suggestions (provide suggestions for any improvements as a bullet list. Include things like code readability, variable naming, call out any improvements based on software engineering principles like DRY, single responsibility principle)
-        Test Coverage (include what test coverage is needed as bullet list)
-        ${code}
-        `,
+        prompt: `
+Explain the code diff using the given sections:
+##Explanation  (detailed, verbose, explanation of the diff with examples)
+##Suggestions (bullet list of suggestions for any improvements. Consider things like readability, variable naming, software engineering principles like DRY, single responsibility principle. Provide explicit examples.)
+##Test Coverage (bullet list of test cases with examples)
+
+${code}
+
+Format output as markdown
+##Explanation
+`,
         max_tokens: 2048
     });
-    console.log(completion.data.choices)
+    console.log(completion.data.choices[0].text)
 
     res.json({
-        'review': completion.data.choices[0]
+        'review': converter.makeHtml(completion.data.choices[0].text)
     });
 });
 

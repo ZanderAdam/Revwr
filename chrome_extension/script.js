@@ -30,7 +30,7 @@ function getReview(selectedCode) {
         .then(data => {
             console.log(data);
             var displayElem = document.getElementById('parsed-lines')
-            displayElem.innerHTML = data.review.text
+            displayElem.innerHTML = data.review
         })
         .catch(error => {
             console.error(error);
@@ -66,8 +66,10 @@ function toggleSidebar() {
         right: 0; width: 300px; height: 100%; \
         background-color: #f1f1f1; \
         padding: 20px; box-sizing: border-box; \
-        overflow-y: scroll; z-index:9999999999"
-        parseButton.innerHTML = 'Parse'
+        overflow-y: scroll; z-index:9999999999; \
+        color: black"
+
+        parseButton.innerHTML = 'Explain'
         sidePanel.appendChild(parseButton)
         sidePanel.appendChild(parsedLines)
         document.body.appendChild(sidePanel)
