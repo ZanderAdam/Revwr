@@ -53,6 +53,7 @@ function toggleSidebar() {
         let parser = new DOMParser();
         let templateContent = parser.parseFromString(data, "text/html");
         let parseButton = templateContent.querySelector('#parse-button');
+        let closeButton = templateContent.querySelector('#close-button');
         let parsedLines = templateContent.querySelector('#parsed-lines');
 
         let codeLines = document.querySelectorAll('.diff-table tr');
@@ -68,6 +69,10 @@ function toggleSidebar() {
         parseButton.addEventListener('click', () => {
           const selectedLines = getSelectedLines(parsedLines);
           getReview(selectedLines);
+        });
+
+        closeButton.addEventListener('click', () => {
+          toggleSidebar();
         });
 
         document.body.appendChild(templateContent.firstChild);

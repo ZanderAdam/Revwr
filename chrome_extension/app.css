@@ -30,6 +30,24 @@
   background-color: #3e3e3e;
 }
 
+#revwr #close-button {
+  position: absolute;
+  background-color: #2e2e2e;
+  top: 10px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+}
+
+#revwr #close-button:hover {
+  background-color: #3e3e3e;
+}
+
 #revwr #parse-button:focus {
   outline: none;
 }
