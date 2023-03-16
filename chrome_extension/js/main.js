@@ -1,3 +1,5 @@
+import { getSelectedLines } from './github.js';
+
 function handleRequest(request, sender, sendResponse) {
   if (request === "toggle")
     toggleSidebar();
@@ -64,16 +66,8 @@ function toggleSidebar() {
         }
 
         parseButton.addEventListener('click', () => {
-          let selectedLines = [];
-          let rowSelectors = document.querySelectorAll('.line-selector:checked');
-          rowSelectors.forEach(sel => {
-            var row = sel.parentNode;
-            var dataElem = row.querySelector('.blob-code .add-line-comment');
-            console.log(dataElem.attributes['data-original-line']);
-            selectedLines.push(dataElem.attributes['data-original-line'].value);
-          });
-          parsedLines.innerHTML = selectedLines.join('<br>');
-          getReview(selectedLines.join('\n'));
+          const selectedLines = getSelectedLines(parsedLines);
+          getReview(selectedLines);
         });
 
         document.body.appendChild(templateContent.firstChild);
@@ -97,6 +91,8 @@ document.body.onmousedown = function (event) {
 
   isSelectMode = true;
 };
+
+
 
 export function main() {
   console.log("main");

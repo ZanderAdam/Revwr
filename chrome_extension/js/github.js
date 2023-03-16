@@ -11,4 +11,4 @@ const getSelectedLines = (parsedLines) => {
   return selectedLines.join('\n');
 };
 
-exports.getSelectedLines = getSelectedLines;
+export { getSelectedLines };
