@@ -3,8 +3,6 @@ function handleRequest(request, sender, sendResponse) {
     toggleSidebar();
 }
 
-chrome.runtime.onMessage.addListener(handleRequest);
-
 var sidebarOpen = false;
 var isSelectMode = false;
 
@@ -50,7 +48,6 @@ function toggleSidebar() {
     fetch(chrome.runtime.getURL("template.html"))
       .then(response => response.text())
       .then(data => {
-        console.log(data);
         let parser = new DOMParser();
         let templateContent = parser.parseFromString(data, "text/html");
         let parseButton = templateContent.querySelector('#parse-button');
@@ -101,6 +98,11 @@ document.body.onmousedown = function (event) {
   isSelectMode = true;
 };
 
-document.body.onmouseup = function () {
-  isSelectMode = false;
-};
+export function main() {
+  console.log("main");
+  chrome.runtime.onMessage.addListener(handleRequest);
+
+  document.body.onmouseup = function () {
+    isSelectMode = false;
+  };
+}
