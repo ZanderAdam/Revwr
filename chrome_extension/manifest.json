@@ -1,23 +1,30 @@
 {
-    "manifest_version": 3,
-    "name": "Revwr",
-    "description": "Uses AI to review the selected pull request code",
-    "version": "1.0",
-    "icons": {
-        "32": "icon.png"
-    },
-    "background": {
-        "service_worker": "background.js"
-    },
-    "host_permissions": [
-        "https://github.com/*"
-    ],
-    "permissions": [
-        "tabs"
-    ],
-    "content_scripts": [{
-        "matches": ["https://github.com/*", "http://localhost:3000/*"],
-        "js": ["script.js"]
-    }],
-    "action": {}
+  "manifest_version": 3,
+  "name": "Revwr",
+  "description": "Uses AI to review the selected pull request code",
+  "version": "1.0",
+  "icons": {
+    "32": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "https://github.com/*"
+  ],
+  "permissions": [
+    "tabs"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://github.com/*",
+        "http://localhost:3000/*"
+      ],
+      "js": [
+        "script.js"
+      ]
+    }
+  ],
+  "action": {}
 }
