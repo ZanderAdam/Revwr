@@ -1,0 +1,39 @@
+#revwr #side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background-color: #1e1e1e;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  z-index: 9999999999;
+  color: white;
+}
+
+#revwr #parse-button {
+  background-color: #2e2e2e;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 12px;
+}
+
+#revwr #parse-button:hover {
+  background-color: #3e3e3e;
+}
+
+#revwr #parse-button:focus {
+  outline: none;
+}
+
+#revwr #parsed-lines {
+  margin-top: 20px;
+}
