@@ -1,3 +1,14 @@
+#revwr {
+  all:initial;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  line-height: 1.5;
+}
+
+#revwr * {
+  all:unset;
+  display: block;
+}
+
 #revwr #side-panel {
   position: fixed;
   top: 0;
@@ -95,4 +106,47 @@
   padding: 10px;
   background-color: #3e3e3e;
   border-radius: 4px;
+}
+
+#revwr .spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+#revwr .spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+}
+
+#revwr .spinner div {
+  width: 6px;
+  height: 6px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  margin: 0 2px;
+  animation: dots 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+}
+
+#revwr .spinner div:nth-child(2) {
+  animation-delay: -0.4s;
+}
+
+#revwr .spinner div:nth-child(3) {
+  animation-delay: -0.2s;
+}
+
+@keyframes dots {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  30%, 50% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }

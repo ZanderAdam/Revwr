@@ -30,10 +30,10 @@ app.use(function (req, res, next) {
 
 const converter = new showdown.Converter();
 
-const testReview = `The above code change introduces a new function called 'calculateTotal' which takes two arguments, 'price' and 'quantity'. It multiplies the 'price' by the 'quantity' to calculate the total cost of an item and returns the result. This function is particularly useful in scenarios where you need to calculate the total cost of multiple items, such as in an e-commerce application.
-
-Additionally, a new variable 'result' has been declared and initialized with the
-`;
+const testReview = async () => {
+  await new Promise(r => setTimeout(r, 10000));
+  return `The above code change introduces a new function called 'calculateTotal' which takes two arguments, 'price' and 'quantity'. It multiplies the 'price' by the 'quantity' to calculate the total cost of an item and returns the result. This function is particularly useful in scenarios where you need to calculate the total cost of multiple items, such as in an e-commerce application.`;
+};
 
 const getReviewFromOpenAI = async (code) => {
   const openai = new OpenAIApi(configuration);
@@ -62,7 +62,7 @@ app.post('/review', async (req, res) => {
     code
   } = req.body;
 
-  const response = testMode ? testReview : await getReviewFromOpenAI(code);
+  const response = testMode ? await testReview() : await getReviewFromOpenAI(code);
 
   console.log(response);
 

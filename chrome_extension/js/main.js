@@ -56,6 +56,8 @@ function displayAllDiffsAndExplanations(fileDiffs) {
     explanationElem.className = 'explanation';
     explanationElem.id = `explanation-${index}`;
 
+    showSpinner(explanationElem);
+
     getReview(fileDiff.fileContent).then((data) => {
       explanationElem.innerHTML = data.review;
     });
@@ -67,9 +69,12 @@ function displayAllDiffsAndExplanations(fileDiffs) {
 
 function handleParseButtonClick() {
   const parsedLines = document.querySelector('#parsed-lines');
+  const displayElem = document.getElementById('parsed-lines');
+  showSpinner(displayElem);
+
   const selectedLines = getSelectedLines(parsedLines);
+
   getReview(selectedLines).then(data => {
-    var displayElem = document.getElementById('parsed-lines');
     displayElem.innerHTML = data.review;
   });;
 }
@@ -133,6 +138,21 @@ function appendCheckboxesToCodeLines() {
     selElem.addEventListener('mouseover', selectLine);
     codeLines[i].appendChild(selElem);
   }
+}
+
+function showSpinner(parentNode) {
+  const spinnerContainer = document.createElement('div');
+  spinnerContainer.className = 'spinner-container';
+  const spinner = document.createElement('div');
+  spinner.className = 'spinner';
+
+  for (let i = 0; i < 3; i++) {
+    const dot = document.createElement('div');
+    spinner.appendChild(dot);
+  }
+
+  spinnerContainer.appendChild(spinner);
+  parentNode.appendChild(spinnerContainer);
 }
 
 function openSidebar() {
