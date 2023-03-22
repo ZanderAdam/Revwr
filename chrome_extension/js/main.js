@@ -35,7 +35,11 @@ function getReview(selectedCode) {
     });
 }
 
-function displayAllDiffsAndExplanations(fileDiffs) {
+function showFiles() {
+
+}
+
+function displayAllFiles(fileDiffs) {
   const displayElem = document.getElementById('parsed-lines');
   displayElem.innerHTML = '';
 
@@ -50,18 +54,29 @@ function displayAllDiffsAndExplanations(fileDiffs) {
     const fileContentsElem = document.createElement('pre');
     fileContentsElem.className = 'file-contents';
     fileContentsElem.textContent = fileDiff.fileContent;
+    fileContentsElem.style.display = 'none';
     fileContainer.appendChild(fileContentsElem);
+
+    fileNameElem.addEventListener('click', () => {
+      fileContentsElem.style.display = fileContentsElem.style.display === 'none' ? 'block' : 'none';
+    });
 
     const explanationElem = document.createElement('div');
     explanationElem.className = 'explanation';
     explanationElem.id = `explanation-${index}`;
 
-    showSpinner(explanationElem);
+    const explainButton = document.createElement('button');
+    explainButton.textContent = 'Explain';
+    explainButton.className = 'explain-button';
 
-    getReview(fileDiff.fileContent).then((data) => {
-      explanationElem.innerHTML = data.review;
+    explainButton.addEventListener('click', () => {
+      showSpinner(explanationElem);
+      getReview(fileDiff.fileContent, fileDiff.fileName).then((data) => {
+        explanationElem.innerHTML = data.review;
+      });
     });
 
+    explanationElem.appendChild(explainButton);
     fileContainer.appendChild(explanationElem);
     displayElem.appendChild(fileContainer);
   });
@@ -80,8 +95,10 @@ function handleParseButtonClick() {
 }
 
 function handleExplainAllButtonClick() {
-  const parsedFiles = getPullRequestDiffs();
-  displayAllDiffsAndExplanations(parsedFiles);
+  const explainButtons = document.querySelectorAll('.explain-button');
+  explainButtons.forEach(button => {
+    button.click();
+  });
 }
 
 function handleCloseButtonClick() {
@@ -152,7 +169,7 @@ function showSpinner(parentNode) {
   }
 
   spinnerContainer.appendChild(spinner);
-  parentNode.appendChild(spinnerContainer);
+  parentNode.replaceChildren(spinnerContainer);
 }
 
 function openSidebar() {
@@ -168,6 +185,9 @@ function openSidebar() {
 
       document.body.appendChild(templateContent.firstChild);
       document.body.style.cssText = "margin-right: 600px;";
+
+      const parsedFiles = getPullRequestDiffs();
+      displayAllFiles(parsedFiles);
 
       sidebarOpen = true;
     })

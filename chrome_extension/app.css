@@ -90,6 +90,7 @@
   margin-bottom: 10px;
   font-size: 18px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 #revwr .file-contents {
@@ -107,6 +108,28 @@
   padding: 10px;
   background-color: #3e3e3e;
   border-radius: 4px;
+}
+
+#revwr .explain-button {
+  background-color: #2e2e2e;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+#revwr .explain-button:hover {
+  background-color: #3e3e3e;
+}
+
+#revwr .explain-button:focus {
+  outline: none;
 }
 
 #revwr .spinner-container {
