@@ -5,6 +5,12 @@ const {
   OpenAIApi
 } = require("openai");
 
+const testMode = process.env.NODE_ENV === 'test';
+
+if (testMode) {
+  console.log('Running in test mode');
+}
+
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -24,12 +30,12 @@ app.use(function (req, res, next) {
 
 const converter = new showdown.Converter();
 
-app.post('/review', async (req, res) => {
-  console.log(req);
-  const {
-    code
-  } = req.body;
+const testReview = `The above code change introduces a new function called 'calculateTotal' which takes two arguments, 'price' and 'quantity'. It multiplies the 'price' by the 'quantity' to calculate the total cost of an item and returns the result. This function is particularly useful in scenarios where you need to calculate the total cost of multiple items, such as in an e-commerce application.
 
+Additionally, a new variable 'result' has been declared and initialized with the
+`;
+
+const getReviewFromOpenAI = async (code) => {
   const openai = new OpenAIApi(configuration);
   const completion = await openai.createCompletion({
     model: "text-davinci-003",
@@ -46,10 +52,22 @@ Format output as markdown
 `,
     max_tokens: 2048
   });
-  console.log(completion.data.choices[0].text);
+
+  return completion.data.choices[0].text;
+};
+
+app.post('/review', async (req, res) => {
+  console.log(req);
+  const {
+    code
+  } = req.body;
+
+  const response = testMode ? testReview : await getReviewFromOpenAI(code);
+
+  console.log(response);
 
   res.json({
-    'review': converter.makeHtml(completion.data.choices[0].text)
+    'review': converter.makeHtml(response)
   });
 });
 
