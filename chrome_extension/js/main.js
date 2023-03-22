@@ -83,6 +83,35 @@ function handleCloseButtonClick() {
   toggleSidebar();
 }
 
+function attachResizeHandler(templateContent) {
+  const resizeHandle = templateContent.querySelector('#revwr .resize-handle');
+  const sidePanel = templateContent.querySelector('#revwr #side-panel');
+  let dragging = false;
+  let startX;
+
+  resizeHandle.addEventListener('mousedown', (e) => {
+    startX = e.clientX;
+    dragging = true;
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (dragging) {
+      const currentWidth = sidePanel.offsetWidth;
+      const deltaX = startX - e.clientX;
+      const newWidth = currentWidth + deltaX;
+
+      const newWidthStr = `${newWidth}px`;
+      sidePanel.style.width = newWidthStr;
+      document.body.style.cssText = `margin-right: ${newWidthStr};`;
+      startX = e.clientX;
+    }
+  });
+
+  window.addEventListener('mouseup', () => {
+    dragging = false;
+  });
+}
+
 function setupEventListeners(templateContent) {
   const parseButton = templateContent.querySelector('#parse-button');
   const explainAllButton = templateContent.querySelector('#explain-all-button');
@@ -91,6 +120,7 @@ function setupEventListeners(templateContent) {
   parseButton.addEventListener('click', handleParseButtonClick);
   explainAllButton.addEventListener('click', handleExplainAllButtonClick);
   closeButton.addEventListener('click', handleCloseButtonClick);
+  attachResizeHandler(templateContent);
 }
 
 function appendCheckboxesToCodeLines() {
@@ -117,7 +147,7 @@ function openSidebar() {
       appendCheckboxesToCodeLines();
 
       document.body.appendChild(templateContent.firstChild);
-      document.body.style.cssText = "margin-right: 300px;";
+      document.body.style.cssText = "margin-right: 600px;";
 
       sidebarOpen = true;
     })

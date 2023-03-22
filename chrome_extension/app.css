@@ -2,7 +2,7 @@
   position: fixed;
   top: 0;
   right: 0;
-  width: 300px;
+  width: 600px;
   height: 100%;
   background-color: #1e1e1e;
   padding: 20px;
@@ -53,6 +53,17 @@
 #revwr #parse-button:focus,
 #revwr #explain-all-button:focus {
   outline: none;
+}
+
+#revwr .resize-handle {
+  position: absolute;
+  top: 0;
+  left: -5px;
+  width: 10px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 1;
+  background-color: #2e2e2e;
 }
 
 #revwr #parsed-lines {
