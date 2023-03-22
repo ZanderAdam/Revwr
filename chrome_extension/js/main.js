@@ -5,14 +5,14 @@ function handleRequest(request, sender, sendResponse) {
     toggleSidebar();
 }
 
-var sidebarOpen = false;
-var isSelectMode = false;
+let sidebarOpen = false;
+let isSelectMode = false;
 
 function selectLine(event) {
   if (!isSelectMode)
     return;
 
-  let selElem = event.target;
+  const selElem = event.target;
   selElem.checked = true;
 }
 
@@ -34,77 +34,6 @@ function getReview(selectedCode) {
       console.error(error);
     });
 }
-
-function toggleSidebar() {
-  if (sidebarOpen) {
-    console.log('closing sidebar');
-    var el = document.getElementById('side-panel');
-    el.parentNode.removeChild(el);
-
-    document.body.style.cssText = "margin-right: 0px;";
-
-    sidebarOpen = false;
-  } else {
-    console.log('opening sidebar');
-    fetch(chrome.runtime.getURL("template.html"))
-      .then(response => response.text())
-      .then(data => {
-        let parser = new DOMParser();
-        let templateContent = parser.parseFromString(data, "text/html");
-        let parseButton = templateContent.querySelector('#parse-button');
-        let explainAllButton = templateContent.querySelector('#explain-all-button');
-        let closeButton = templateContent.querySelector('#close-button');
-        let parsedLines = templateContent.querySelector('#parsed-lines');
-
-        let codeLines = document.querySelectorAll('.diff-table tr');
-        for (let i = 0; i < codeLines.length; i++) {
-          let selElem = document.createElement('input');
-          selElem.type = 'checkbox';
-          selElem.className = 'line-selector';
-          selElem.style.cssText = 'position: absolute;left: 0;';
-          selElem.addEventListener('mouseover', selectLine);
-          codeLines[i].appendChild(selElem);
-        }
-
-        parseButton.addEventListener('click', () => {
-          const selectedLines = getSelectedLines(parsedLines);
-          getReview(selectedLines)
-            .then(data => {
-              var displayElem = document.getElementById('parsed-lines');
-              displayElem.innerHTML = data.review;
-            });
-        });
-
-        explainAllButton.addEventListener('click', () => {
-          const parsedFiles = getPullRequestDiffs();
-          displayAllDiffsAndExplanations(parsedFiles);
-        });
-
-        closeButton.addEventListener('click', () => {
-          toggleSidebar();
-        });
-
-        document.body.appendChild(templateContent.firstChild);
-
-        document.body.style.cssText = "margin-right: 300px;";
-
-        sidebarOpen = true;
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
-}
-
-document.body.onmousedown = function (event) {
-  var element = event.target;
-  if (element.classList.contains('line-selector')) {
-    console.log('selecting');
-    element.checked = true;
-  }
-
-  isSelectMode = true;
-};
 
 function displayAllDiffsAndExplanations(fileDiffs) {
   const displayElem = document.getElementById('parsed-lines');
@@ -136,11 +65,103 @@ function displayAllDiffsAndExplanations(fileDiffs) {
   });
 }
 
+function handleParseButtonClick() {
+  const parsedLines = document.querySelector('#parsed-lines');
+  const selectedLines = getSelectedLines(parsedLines);
+  getReview(selectedLines).then(data => {
+    var displayElem = document.getElementById('parsed-lines');
+    displayElem.innerHTML = data.review;
+  });;
+}
+
+function handleExplainAllButtonClick() {
+  const parsedFiles = getPullRequestDiffs();
+  displayAllDiffsAndExplanations(parsedFiles);
+}
+
+function handleCloseButtonClick() {
+  toggleSidebar();
+}
+
+function setupEventListeners(templateContent) {
+  const parseButton = templateContent.querySelector('#parse-button');
+  const explainAllButton = templateContent.querySelector('#explain-all-button');
+  const closeButton = templateContent.querySelector('#close-button');
+
+  parseButton.addEventListener('click', handleParseButtonClick);
+  explainAllButton.addEventListener('click', handleExplainAllButtonClick);
+  closeButton.addEventListener('click', handleCloseButtonClick);
+}
+
+function appendCheckboxesToCodeLines() {
+  const codeLines = document.querySelectorAll('.diff-table tr');
+  for (let i = 0; i < codeLines.length; i++) {
+    const selElem = document.createElement('input');
+    selElem.type = 'checkbox';
+    selElem.className = 'line-selector';
+    selElem.style.cssText = 'position: absolute;left: 0;';
+    selElem.addEventListener('mouseover', selectLine);
+    codeLines[i].appendChild(selElem);
+  }
+}
+
+function openSidebar() {
+  console.log('opening sidebar');
+  fetch(chrome.runtime.getURL("template.html"))
+    .then(response => response.text())
+    .then(data => {
+      const parser = new DOMParser();
+      const templateContent = parser.parseFromString(data, "text/html");
+
+      setupEventListeners(templateContent);
+      appendCheckboxesToCodeLines();
+
+      document.body.appendChild(templateContent.firstChild);
+      document.body.style.cssText = "margin-right: 300px;";
+
+      sidebarOpen = true;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+function closeSidebar() {
+  console.log('closing sidebar');
+  const el = document.getElementById('side-panel');
+  el.parentNode.removeChild(el);
+
+  document.body.style.cssText = "margin-right: 0px;";
+
+  sidebarOpen = false;
+}
+
+function toggleSidebar() {
+  if (
+    sidebarOpen) {
+    closeSidebar();
+  } else {
+    openSidebar();
+  }
+}
+
+function handleMouseDown(event) {
+  const element = event.target;
+  if (element.classList.contains('line-selector')) {
+    console.log('selecting');
+    element.checked = true;
+  }
+  isSelectMode = true;
+}
+
+function handleMouseUp() {
+  isSelectMode = false;
+}
+
 export function main() {
   console.log("main");
   chrome.runtime.onMessage.addListener(handleRequest);
 
-  document.body.onmouseup = function () {
-    isSelectMode = false;
-  };
+  document.body.onmousedown = handleMouseDown;
+  document.body.onmouseup = handleMouseUp;
 }
