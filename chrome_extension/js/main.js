@@ -1,4 +1,4 @@
-import { getSelectedLines } from './github.js';
+import { getSelectedLines, getPullRequestDiffs } from './github.js';
 
 function handleRequest(request, sender, sendResponse) {
   if (request === "toggle")
@@ -17,7 +17,7 @@ function selectLine(event) {
 }
 
 function getReview(selectedCode) {
-  fetch('http://localhost:3000/review', {
+  return fetch('http://localhost:3000/review', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -28,8 +28,7 @@ function getReview(selectedCode) {
   })
     .then(response => response.json())
     .then(data => {
-      var displayElem = document.getElementById('parsed-lines');
-      displayElem.innerHTML = data.review;
+      return data;
     })
     .catch(error => {
       console.error(error);
@@ -53,6 +52,7 @@ function toggleSidebar() {
         let parser = new DOMParser();
         let templateContent = parser.parseFromString(data, "text/html");
         let parseButton = templateContent.querySelector('#parse-button');
+        let explainAllButton = templateContent.querySelector('#explain-all-button');
         let closeButton = templateContent.querySelector('#close-button');
         let parsedLines = templateContent.querySelector('#parsed-lines');
 
@@ -68,7 +68,16 @@ function toggleSidebar() {
 
         parseButton.addEventListener('click', () => {
           const selectedLines = getSelectedLines(parsedLines);
-          getReview(selectedLines);
+          getReview(selectedLines)
+            .then(data => {
+              var displayElem = document.getElementById('parsed-lines');
+              displayElem.innerHTML = data.review;
+            });
+        });
+
+        explainAllButton.addEventListener('click', () => {
+          const parsedFiles = getPullRequestDiffs();
+          displayAllDiffsAndExplanations(parsedFiles);
         });
 
         closeButton.addEventListener('click', () => {
@@ -97,7 +106,35 @@ document.body.onmousedown = function (event) {
   isSelectMode = true;
 };
 
+function displayAllDiffsAndExplanations(fileDiffs) {
+  const displayElem = document.getElementById('parsed-lines');
+  displayElem.innerHTML = '';
 
+  fileDiffs.forEach((fileDiff, index) => {
+    const fileContainer = document.createElement('div');
+    fileContainer.className = 'file-container';
+
+    const fileNameElem = document.createElement('h3');
+    fileNameElem.textContent = fileDiff.fileName;
+    fileContainer.appendChild(fileNameElem);
+
+    const fileContentsElem = document.createElement('pre');
+    fileContentsElem.className = 'file-contents';
+    fileContentsElem.textContent = fileDiff.fileContent;
+    fileContainer.appendChild(fileContentsElem);
+
+    const explanationElem = document.createElement('div');
+    explanationElem.className = 'explanation';
+    explanationElem.id = `explanation-${index}`;
+
+    getReview(fileDiff.fileContent).then((data) => {
+      explanationElem.innerHTML = data.review;
+    });
+
+    fileContainer.appendChild(explanationElem);
+    displayElem.appendChild(fileContainer);
+  });
+}
 
 export function main() {
   console.log("main");

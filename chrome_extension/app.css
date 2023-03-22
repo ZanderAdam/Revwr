@@ -12,7 +12,8 @@
   color: white;
 }
 
-#revwr #parse-button {
+#revwr #parse-button,
+#revwr #explain-all-button {
   background-color: #2e2e2e;
   border: none;
   color: white;
@@ -26,7 +27,8 @@
   border-radius: 12px;
 }
 
-#revwr #parse-button:hover {
+#revwr #parse-button:hover,
+#revwr #explain-all-button:hover {
   background-color: #3e3e3e;
 }
 
@@ -48,10 +50,38 @@
   background-color: #3e3e3e;
 }
 
-#revwr #parse-button:focus {
+#revwr #parse-button:focus,
+#revwr #explain-all-button:focus {
   outline: none;
 }
 
 #revwr #parsed-lines {
   margin-top: 20px;
+}
+
+#revwr .file-container {
+  margin-bottom: 20px;
+}
+
+#revwr h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#revwr .file-contents {
+  background-color: #2e2e2e;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 10px;
+}
+
+#revwr .explanation {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #3e3e3e;
+  border-radius: 4px;
 }
