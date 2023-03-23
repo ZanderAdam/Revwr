@@ -7,6 +7,7 @@ function handleRequest(request, sender, sendResponse) {
 
 let sidebarOpen = false;
 let isSelectMode = false;
+let isSelectedLinesMode = false;
 
 function selectLine(event) {
   if (!isSelectMode)
@@ -35,35 +36,15 @@ function getReview(selectedCode) {
     });
 }
 
-function showFiles() {
+function displayAllFiles() {
+  const fileDiffs = getPullRequestDiffs();
+  isSelectedLinesMode = true;
 
-}
-
-function displayAllFiles(fileDiffs) {
   const displayElem = document.getElementById('parsed-lines');
   displayElem.innerHTML = '';
 
-  fileDiffs.forEach((fileDiff, index) => {
-    const fileContainer = document.createElement('div');
-    fileContainer.className = 'file-container';
-
-    const fileNameElem = document.createElement('h3');
-    fileNameElem.textContent = fileDiff.fileName;
-    fileContainer.appendChild(fileNameElem);
-
-    const fileContentsElem = document.createElement('pre');
-    fileContentsElem.className = 'file-contents';
-    fileContentsElem.textContent = fileDiff.fileContent;
-    fileContentsElem.style.display = 'none';
-    fileContainer.appendChild(fileContentsElem);
-
-    fileNameElem.addEventListener('click', () => {
-      fileContentsElem.style.display = fileContentsElem.style.display === 'none' ? 'block' : 'none';
-    });
-
-    const explanationElem = document.createElement('div');
-    explanationElem.className = 'explanation';
-    explanationElem.id = `explanation-${index}`;
+  fileDiffs.forEach((fileDiff) => {
+    const explanationElem = createFileContents(fileDiff.fileName, fileDiff.fileContent, displayElem);
 
     const explainButton = document.createElement('button');
     explainButton.textContent = 'Explain';
@@ -71,30 +52,76 @@ function displayAllFiles(fileDiffs) {
 
     explainButton.addEventListener('click', () => {
       showSpinner(explanationElem);
-      getReview(fileDiff.fileContent, fileDiff.fileName).then((data) => {
+      getReview(fileDiff.fileContent).then((data) => {
         explanationElem.innerHTML = data.review;
       });
     });
 
     explanationElem.appendChild(explainButton);
-    fileContainer.appendChild(explanationElem);
-    displayElem.appendChild(fileContainer);
+
   });
 }
 
-function handleParseButtonClick() {
-  const parsedLines = document.querySelector('#parsed-lines');
-  const displayElem = document.getElementById('parsed-lines');
-  showSpinner(displayElem);
+function handleParseButtonClick(templateContent) {
+  isSelectedLinesMode = true;
 
-  const selectedLines = getSelectedLines(parsedLines);
+  const explainAllButton = templateContent.querySelector('#explain-all-button');
+  explainAllButton.innerHTML = "Show All Files";
+
+  const displayElem = document.getElementById('parsed-lines');
+  displayElem.innerHTML = '';
+
+  const selectedLines = getSelectedLines();
+
+  const explanationElem = createFileContents('', selectedLines, displayElem, false);
+
+  showSpinner(explanationElem);
 
   getReview(selectedLines).then(data => {
-    displayElem.innerHTML = data.review;
+    explanationElem.innerHTML = data.review;
   });;
 }
 
-function handleExplainAllButtonClick() {
+function createFileContents(fileName, selectedDiff, parentElem, hideContents = true) {
+  const fileContainer = document.createElement('div');
+  fileContainer.className = 'file-container';
+
+  const fileNameElem = document.createElement('h3');
+  fileNameElem.textContent = fileName;
+  fileContainer.appendChild(fileNameElem);
+
+  const fileContentsElem = document.createElement('pre');
+  fileContentsElem.className = 'file-contents';
+  fileContentsElem.textContent = selectedDiff;
+
+  if (hideContents)
+    fileContentsElem.style.display = 'none';
+
+  fileContainer.appendChild(fileContentsElem);
+
+  fileNameElem.addEventListener('click', () => {
+    fileContentsElem.style.display = fileContentsElem.style.display === 'none' ? 'block' : 'none';
+  });
+
+  const explanationElem = document.createElement('div');
+  explanationElem.className = 'explanation';
+
+  fileContainer.appendChild(explanationElem);
+  parentElem.appendChild(fileContainer);
+
+  return explanationElem;
+}
+
+function handleExplainAllButtonClick(templateContent) {
+  const explainAllButton = templateContent.querySelector('#explain-all-button');
+  explainAllButton.innerHTML = "Explain All";
+
+  if (isSelectedLinesMode) {
+    isSelectedLinesMode = false;
+    displayAllFiles();
+    return;
+  }
+
   const explainButtons = document.querySelectorAll('.explain-button');
   explainButtons.forEach(button => {
     button.click();
@@ -139,8 +166,8 @@ function setupEventListeners(templateContent) {
   const explainAllButton = templateContent.querySelector('#explain-all-button');
   const closeButton = templateContent.querySelector('#close-button');
 
-  parseButton.addEventListener('click', handleParseButtonClick);
-  explainAllButton.addEventListener('click', handleExplainAllButtonClick);
+  parseButton.addEventListener('click', () => { handleParseButtonClick(templateContent); });
+  explainAllButton.addEventListener('click', () => { handleExplainAllButtonClick(templateContent); });
   closeButton.addEventListener('click', handleCloseButtonClick);
   attachResizeHandler(templateContent);
 }
@@ -178,16 +205,15 @@ function openSidebar() {
     .then(response => response.text())
     .then(data => {
       const parser = new DOMParser();
-      const templateContent = parser.parseFromString(data, "text/html");
+      const templateContent = parser.parseFromString(data, "text/html").firstChild;
 
       setupEventListeners(templateContent);
       appendCheckboxesToCodeLines();
 
-      document.body.appendChild(templateContent.firstChild);
+      document.body.appendChild(templateContent);
       document.body.style.cssText = "margin-right: 600px;";
 
-      const parsedFiles = getPullRequestDiffs();
-      displayAllFiles(parsedFiles);
+      displayAllFiles();
 
       sidebarOpen = true;
     })
@@ -220,8 +246,8 @@ function handleMouseDown(event) {
   if (element.classList.contains('line-selector')) {
     console.log('selecting');
     element.checked = true;
+    isSelectMode = true;
   }
-  isSelectMode = true;
 }
 
 function handleMouseUp() {
