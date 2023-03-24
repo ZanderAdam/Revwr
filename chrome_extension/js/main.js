@@ -1,4 +1,5 @@
 import { getSelectedLines, getPullRequestDiffs } from './github.js';
+import { Chat } from './chat.js';
 
 function handleRequest(request, sender, sendResponse) {
   if (request === "toggle")
@@ -17,24 +18,7 @@ function selectLine(event) {
   selElem.checked = true;
 }
 
-function getReview(selectedCode) {
-  return fetch('http://localhost:3000/review', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      code: selectedCode
-    })
-  })
-    .then(response => response.json())
-    .then(data => {
-      return data;
-    })
-    .catch(error => {
-      console.error(error);
-    });
-}
+
 
 function displayAllFiles() {
   const fileDiffs = getPullRequestDiffs();
@@ -44,21 +28,7 @@ function displayAllFiles() {
   displayElem.innerHTML = '';
 
   fileDiffs.forEach((fileDiff) => {
-    const explanationElem = createFileContents(fileDiff.fileName, fileDiff.fileContent, displayElem);
-
-    const explainButton = document.createElement('button');
-    explainButton.textContent = 'Explain';
-    explainButton.className = 'explain-button';
-
-    explainButton.addEventListener('click', () => {
-      showSpinner(explanationElem);
-      getReview(fileDiff.fileContent).then((data) => {
-        explanationElem.innerHTML = data.review;
-      });
-    });
-
-    explanationElem.appendChild(explainButton);
-
+    createFileContents(fileDiff.fileName, fileDiff.fileContent, displayElem);
   });
 }
 
@@ -73,16 +43,10 @@ function handleParseButtonClick(templateContent) {
 
   const selectedLines = getSelectedLines();
 
-  const explanationElem = createFileContents('', selectedLines, displayElem, false);
-
-  showSpinner(explanationElem);
-
-  getReview(selectedLines).then(data => {
-    explanationElem.innerHTML = data.review;
-  });;
+  createFileContents('', selectedLines, displayElem, false, false);
 }
 
-function createFileContents(fileName, selectedDiff, parentElem, hideContents = true) {
+function createFileContents(fileName, selectedDiff, parentElem, hideContents = true, showExpainButton = true) {
   const fileContainer = document.createElement('div');
   fileContainer.className = 'file-container';
 
@@ -103,13 +67,30 @@ function createFileContents(fileName, selectedDiff, parentElem, hideContents = t
     fileContentsElem.style.display = fileContentsElem.style.display === 'none' ? 'block' : 'none';
   });
 
-  const explanationElem = document.createElement('div');
-  explanationElem.className = 'explanation';
+  if (showExpainButton) {
+    const explanationElem = document.createElement('div');
+    explanationElem.className = 'explanation';
 
-  fileContainer.appendChild(explanationElem);
+    fileContainer.appendChild(explanationElem);
+
+    const explainButton = document.createElement('button');
+    explainButton.textContent = 'Explain';
+    explainButton.className = 'explain-button';
+
+    explainButton.addEventListener('click', () => {
+      fileContainer.removeChild(explanationElem);
+      const chat = new Chat(fileContainer);
+      chat.start(fileName, selectedDiff);
+    });
+
+    explanationElem.appendChild(explainButton);
+  }
+  else {
+    const chat = new Chat(fileContainer);
+    chat.start('', selectedDiff);
+  }
+
   parentElem.appendChild(fileContainer);
-
-  return explanationElem;
 }
 
 function handleExplainAllButtonClick(templateContent) {
@@ -184,19 +165,9 @@ function appendCheckboxesToCodeLines() {
   }
 }
 
-function showSpinner(parentNode) {
-  const spinnerContainer = document.createElement('div');
-  spinnerContainer.className = 'spinner-container';
-  const spinner = document.createElement('div');
-  spinner.className = 'spinner';
-
-  for (let i = 0; i < 3; i++) {
-    const dot = document.createElement('div');
-    spinner.appendChild(dot);
-  }
-
-  spinnerContainer.appendChild(spinner);
-  parentNode.replaceChildren(spinnerContainer);
+function removeCheckboxesFromCodeLines() {
+  const codeSelectors = document.querySelectorAll('.line-selector');
+  codeSelectors.forEach(selector => { selector.remove(); });
 }
 
 function openSidebar() {
@@ -226,6 +197,7 @@ function closeSidebar() {
   console.log('closing sidebar');
   const el = document.getElementById('side-panel');
   el.parentNode.removeChild(el);
+  removeCheckboxesFromCodeLines();
 
   document.body.style.cssText = "margin-right: 0px;";
 

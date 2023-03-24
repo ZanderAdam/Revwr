@@ -1,9 +1,5 @@
 const express = require('express');
-const showdown = require('showdown');
-const {
-  Configuration,
-  OpenAIApi
-} = require("openai");
+const { Configuration, OpenAIApi } = require('openai');
 
 const testMode = process.env.NODE_ENV === 'test';
 
@@ -20,54 +16,59 @@ const app = express();
 app.use(express.json());
 app.use(function (req, res, next) {
   if (req.headers.origin === 'https://github.com') {
-    res.header("Access-Control-Allow-Origin", "https://github.com");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Origin', 'https://github.com');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept'
+    );
     next();
   } else {
     res.status(403).send('Not allowed');
   }
 });
 
-const converter = new showdown.Converter();
-
 const testReview = async () => {
-  await new Promise(r => setTimeout(r, 10000));
-  return `The above code change introduces a new function called 'calculateTotal' which takes two arguments, 'price' and 'quantity'. It multiplies the 'price' by the 'quantity' to calculate the total cost of an item and returns the result. This function is particularly useful in scenarios where you need to calculate the total cost of multiple items, such as in an e-commerce application.`;
+  await new Promise((r) => setTimeout(r, 3000));
+  return {
+    role: 'assistant',
+    content: `The above code change introduces a new function called 'calculateTotal' which takes two arguments, 'price' and 'quantity'. It multiplies the 'price' by the 'quantity' to calculate the total cost of an item and returns the result. This function is particularly useful in scenarios where you need to calculate the total cost of multiple items, such as in an e-commerce application.`,
+  };
 };
 
-const getReviewFromOpenAI = async (code) => {
+const getReviewFromOpenAI = async (messages) => {
   const openai = new OpenAIApi(configuration);
-  const completion = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: `
-Explain the code diff using the given sections:
-##Explanation  (detailed, verbose, explanation of the diff with examples)
-##Suggestions (bullet list of suggestions for any improvements. Consider things like readability, variable naming, software engineering principles like DRY, single responsibility principle. Provide explicit examples.)
-##Test Coverage (bullet list of test cases with examples)
 
-${code}
+  const messagesToSend = messages;
 
-Format output as markdown
-##Explanation
-`,
-    max_tokens: 2048
+  if (messagesToSend.length === 1) {
+    messagesToSend.unshift({
+      role: 'system',
+      content:
+        'You are a AI assistant performing pull request code review. You are knowledgeable about programming and software engineering principles. Please analyze and summarize what is changing in the code, and provide any feedback or suggestions for improvements if necessary.',
+    });
+  }
+
+  const response = await openai.createChatCompletion({
+    model: 'gpt-3.5-turbo',
+    messages: messagesToSend,
   });
 
-  return completion.data.choices[0].text;
+  return response.data.choices[0].message;
 };
 
 app.post('/review', async (req, res) => {
-  console.log(req);
-  const {
-    code
-  } = req.body;
+  const { messages } = req.body;
 
-  const response = testMode ? await testReview() : await getReviewFromOpenAI(code);
+  console.log('REQUEST', messages);
 
-  console.log(response);
+  const response = testMode
+    ? await testReview()
+    : await getReviewFromOpenAI(messages);
+
+  console.log('RESPONSE', response);
 
   res.json({
-    'review': converter.makeHtml(response)
+    response: response,
   });
 });
 
