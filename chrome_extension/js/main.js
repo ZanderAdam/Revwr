@@ -6,6 +6,7 @@ function handleRequest(request, sender, sendResponse) {
     toggleSidebar();
 }
 
+let sidePanel;
 let sidebarOpen = false;
 let isSelectMode = false;
 let isSelectedLinesMode = false;
@@ -17,8 +18,6 @@ function selectLine(event) {
   const selElem = event.target;
   selElem.checked = true;
 }
-
-
 
 function displayAllFiles() {
   const fileDiffs = getPullRequestDiffs();
@@ -49,6 +48,17 @@ function handleParseButtonClick(templateContent) {
 function createFileContents(fileName, selectedDiff, parentElem, hideContents = true, showExpainButton = true) {
   const fileContainer = document.createElement('div');
   fileContainer.className = 'file-container';
+
+  const expandIcon = document.createElement('span');
+  expandIcon.innerHTML = '⇱';
+  expandIcon.classList.add('expand-icon');
+  fileContainer.appendChild(expandIcon);
+
+  expandIcon.addEventListener('click', () => {
+    fileContainer.classList.toggle('expanded');
+    expandIcon.classList.toggle('expanded');
+    sidePanel.classList.toggle('expanded');
+  });
 
   const fileNameElem = document.createElement('h3');
   fileNameElem.textContent = fileName;
@@ -176,7 +186,9 @@ function openSidebar() {
     .then(response => response.text())
     .then(data => {
       const parser = new DOMParser();
-      const templateContent = parser.parseFromString(data, "text/html").firstChild;
+      const templateContent = parser.parseFromString(data, "text/html").firstChild
+        .querySelector('#revwr');
+      sidePanel = templateContent.querySelector('#side-panel');
 
       setupEventListeners(templateContent);
       appendCheckboxesToCodeLines();
@@ -195,8 +207,7 @@ function openSidebar() {
 
 function closeSidebar() {
   console.log('closing sidebar');
-  const el = document.getElementById('side-panel');
-  el.parentNode.removeChild(el);
+  sidePanel.remove();
   removeCheckboxesFromCodeLines();
 
   document.body.style.cssText = "margin-right: 0px;";
