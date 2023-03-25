@@ -32,6 +32,12 @@ function displayAllFiles() {
 }
 
 function handleParseButtonClick(templateContent) {
+  const selectedLines = getSelectedLines();
+
+  if (!selectedLines) {
+    return;
+  }
+
   isSelectedLinesMode = true;
 
   const explainAllButton = templateContent.querySelector('#explain-all-button');
@@ -39,8 +45,6 @@ function handleParseButtonClick(templateContent) {
 
   const displayElem = document.getElementById('parsed-lines');
   displayElem.innerHTML = '';
-
-  const selectedLines = getSelectedLines();
 
   createFileContents('', selectedLines, displayElem, false, false);
 }
@@ -166,12 +170,18 @@ function setupEventListeners(templateContent) {
 function appendCheckboxesToCodeLines() {
   const codeLines = document.querySelectorAll('.diff-table tr');
   for (let i = 0; i < codeLines.length; i++) {
+    const codeLineElem = codeLines[i];
+    const lineNumElem = codeLineElem.querySelector('.js-linkable-line-number');
+
+    if (!lineNumElem)
+      continue;
+
     const selElem = document.createElement('input');
     selElem.type = 'checkbox';
     selElem.className = 'line-selector';
     selElem.style.cssText = 'position: absolute;left: 0;';
     selElem.addEventListener('mouseover', selectLine);
-    codeLines[i].appendChild(selElem);
+    codeLineElem.appendChild(selElem);
   }
 }
 

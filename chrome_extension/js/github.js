@@ -4,8 +4,9 @@ const getSelectedLines = () => {
   rowSelectors.forEach(sel => {
     var row = sel.parentNode;
     var dataElem = row.querySelector('.blob-code .add-line-comment');
-    console.log(dataElem.attributes['data-original-line']);
-    selectedLines.push(dataElem.attributes['data-original-line'].value);
+
+    if (dataElem && dataElem.hasAttribute('data-original-line'))
+      selectedLines.push(dataElem.attributes['data-original-line'].value);
   });
   return selectedLines.join('\n');
 };
