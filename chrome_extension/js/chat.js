@@ -19,7 +19,7 @@ export class Chat {
     chatForm.id = 'chat-form';
     chatForm.autocomplete = 'off';
     chatForm.addEventListener('submit', (event) =>
-      this.handleChatFormSubmit(event)
+      this.handleChatFormSubmit(event),
     );
     this.fileContainer.appendChild(chatForm);
 

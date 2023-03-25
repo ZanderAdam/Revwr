@@ -1,7 +1,7 @@
 const getSelectedLines = () => {
   let selectedLines = [];
   let rowSelectors = document.querySelectorAll('.line-selector:checked');
-  rowSelectors.forEach(sel => {
+  rowSelectors.forEach((sel) => {
     var row = sel.parentNode;
     var dataElem = row.querySelector('.blob-code .add-line-comment');
 
@@ -15,13 +15,13 @@ function getPullRequestDiffs() {
   let files = document.querySelectorAll('.file');
   const parsedFiles = [];
 
-  files.forEach(file => {
+  files.forEach((file) => {
     const fileName = file.attributes['data-tagsearch-path'].value;
     const rowSelectors = file.querySelectorAll('.line-selector');
 
     const fileLines = [];
 
-    rowSelectors.forEach(sel => {
+    rowSelectors.forEach((sel) => {
       var row = sel.parentNode;
       var dataElem = row.querySelector('.blob-code .add-line-comment');
       if (!dataElem) return;

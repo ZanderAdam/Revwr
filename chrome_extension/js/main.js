@@ -2,8 +2,7 @@ import { getSelectedLines, getPullRequestDiffs } from './github.js';
 import { Chat } from './chat.js';
 
 function handleRequest(request, sender, sendResponse) {
-  if (request === "toggle")
-    toggleSidebar();
+  if (request === 'toggle') toggleSidebar();
 }
 
 let sidePanel;
@@ -12,8 +11,7 @@ let isSelectMode = false;
 let isSelectedLinesMode = false;
 
 function selectLine(event) {
-  if (!isSelectMode)
-    return;
+  if (!isSelectMode) return;
 
   const selElem = event.target;
   selElem.checked = true;
@@ -41,7 +39,7 @@ function handleParseButtonClick(templateContent) {
   isSelectedLinesMode = true;
 
   const explainAllButton = templateContent.querySelector('#explain-all-button');
-  explainAllButton.innerHTML = "Show All Files";
+  explainAllButton.innerHTML = 'Show All Files';
 
   const displayElem = document.getElementById('parsed-lines');
   displayElem.innerHTML = '';
@@ -49,7 +47,13 @@ function handleParseButtonClick(templateContent) {
   createFileContents('', selectedLines, displayElem, false, false);
 }
 
-function createFileContents(fileName, selectedDiff, parentElem, hideContents = true, showExpainButton = true) {
+function createFileContents(
+  fileName,
+  selectedDiff,
+  parentElem,
+  hideContents = true,
+  showExpainButton = true,
+) {
   const fileContainer = document.createElement('div');
   fileContainer.className = 'file-container';
 
@@ -76,13 +80,13 @@ function createFileContents(fileName, selectedDiff, parentElem, hideContents = t
   fileContentsElem.className = 'file-contents';
   fileContentsElem.innerHTML = hljs.highlightAuto(selectedDiff).value;
 
-  if (hideContents)
-    fileContentsElem.style.display = 'none';
+  if (hideContents) fileContentsElem.style.display = 'none';
 
   fileContainer.appendChild(fileContentsElem);
 
   fileNameElem.addEventListener('click', () => {
-    fileContentsElem.style.display = fileContentsElem.style.display === 'none' ? 'block' : 'none';
+    fileContentsElem.style.display =
+      fileContentsElem.style.display === 'none' ? 'block' : 'none';
   });
 
   if (showExpainButton) {
@@ -102,8 +106,7 @@ function createFileContents(fileName, selectedDiff, parentElem, hideContents = t
     });
 
     explanationElem.appendChild(explainButton);
-  }
-  else {
+  } else {
     const chat = new Chat(fileContainer);
     chat.start('', selectedDiff);
   }
@@ -113,7 +116,7 @@ function createFileContents(fileName, selectedDiff, parentElem, hideContents = t
 
 function handleExplainAllButtonClick(templateContent) {
   const explainAllButton = templateContent.querySelector('#explain-all-button');
-  explainAllButton.innerHTML = "Explain All";
+  explainAllButton.innerHTML = 'Explain All';
 
   if (isSelectedLinesMode) {
     isSelectedLinesMode = false;
@@ -122,7 +125,7 @@ function handleExplainAllButtonClick(templateContent) {
   }
 
   const explainButtons = templateContent.querySelectorAll('.explain-button');
-  explainButtons.forEach(button => {
+  explainButtons.forEach((button) => {
     button.click();
   });
 }
@@ -165,8 +168,12 @@ function setupEventListeners(templateContent) {
   const explainAllButton = templateContent.querySelector('#explain-all-button');
   const closeButton = templateContent.querySelector('#close-button');
 
-  parseButton.addEventListener('click', () => { handleParseButtonClick(templateContent); });
-  explainAllButton.addEventListener('click', () => { handleExplainAllButtonClick(templateContent); });
+  parseButton.addEventListener('click', () => {
+    handleParseButtonClick(templateContent);
+  });
+  explainAllButton.addEventListener('click', () => {
+    handleExplainAllButtonClick(templateContent);
+  });
   closeButton.addEventListener('click', handleCloseButtonClick);
   attachResizeHandler(templateContent);
 }
@@ -177,8 +184,7 @@ function appendCheckboxesToCodeLines() {
     const codeLineElem = codeLines[i];
     const lineNumElem = codeLineElem.querySelector('.js-linkable-line-number');
 
-    if (!lineNumElem)
-      continue;
+    if (!lineNumElem) continue;
 
     const selElem = document.createElement('input');
     selElem.type = 'checkbox';
@@ -191,30 +197,33 @@ function appendCheckboxesToCodeLines() {
 
 function removeCheckboxesFromCodeLines() {
   const codeSelectors = document.querySelectorAll('.line-selector');
-  codeSelectors.forEach(selector => { selector.remove(); });
+  codeSelectors.forEach((selector) => {
+    selector.remove();
+  });
 }
 
 function openSidebar() {
   console.log('opening sidebar');
-  fetch(chrome.runtime.getURL("template.html"))
-    .then(response => response.text())
-    .then(data => {
+  fetch(chrome.runtime.getURL('template.html'))
+    .then((response) => response.text())
+    .then((data) => {
       const parser = new DOMParser();
-      const templateContent = parser.parseFromString(data, "text/html").firstChild
-        .querySelector('#revwr');
+      const templateContent = parser
+        .parseFromString(data, 'text/html')
+        .firstChild.querySelector('#revwr');
       sidePanel = templateContent.querySelector('#side-panel');
 
       setupEventListeners(templateContent);
       appendCheckboxesToCodeLines();
 
       document.body.appendChild(templateContent);
-      document.body.style.cssText = "margin-right: 600px;";
+      document.body.style.cssText = 'margin-right: 600px;';
 
       displayAllFiles();
 
       sidebarOpen = true;
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(error);
     });
 }
@@ -224,14 +233,13 @@ function closeSidebar() {
   sidePanel.remove();
   removeCheckboxesFromCodeLines();
 
-  document.body.style.cssText = "margin-right: 0px;";
+  document.body.style.cssText = 'margin-right: 0px;';
 
   sidebarOpen = false;
 }
 
 function toggleSidebar() {
-  if (
-    sidebarOpen) {
+  if (sidebarOpen) {
     closeSidebar();
   } else {
     openSidebar();
@@ -257,10 +265,10 @@ export function main() {
     highlight: function (code) {
       return hljs.highlightAuto(code).value;
     },
-    langPrefix: 'hljs language-'
+    langPrefix: 'hljs language-',
   });
 
-  console.log("main");
+  console.log('main');
   chrome.runtime.onMessage.addListener(handleRequest);
 
   document.body.onmousedown = handleMouseDown;
