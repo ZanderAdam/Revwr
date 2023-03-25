@@ -45,12 +45,15 @@
   position: fixed;
   top: 0;
   right: 0;
+  bottom: 0;
+  display: flex;
+  flex-flow: column;
   width: 600px;
   height: 100%;
   background-color: #1e1e1e;
-  padding: 20px;
+  padding: 20px 0 20px 20px;
   box-sizing: border-box;
-  overflow-y: scroll;
+  overflow: hidden;
   z-index: 9999999999;
   color: white;
 }
@@ -116,6 +119,8 @@
 
 #revwr #parsed-lines {
   margin-top: 20px;
+  padding-right: 20px;
+  overflow-y: auto;
 }
 
 #revwr .file-container {
@@ -305,10 +310,8 @@
 }
 
 #revwr .expand-icon {
+  float: right;
   cursor: pointer;
-  position: absolute;
-  right: 20px;
-  float: initial;
   font-size: 14px;
   transform: rotate(90deg);
   padding: 5px;

@@ -53,20 +53,24 @@ function createFileContents(fileName, selectedDiff, parentElem, hideContents = t
   const fileContainer = document.createElement('div');
   fileContainer.className = 'file-container';
 
+  const headerElem = document.createElement('span');
+  headerElem.className = 'file-header';
+  fileContainer.appendChild(headerElem);
+
   const expandIcon = document.createElement('span');
   expandIcon.innerHTML = '⇱';
   expandIcon.classList.add('expand-icon');
-  fileContainer.appendChild(expandIcon);
+  headerElem.appendChild(expandIcon);
+
+  const fileNameElem = document.createElement('h3');
+  fileNameElem.textContent = fileName;
+  headerElem.appendChild(fileNameElem);
 
   expandIcon.addEventListener('click', () => {
     fileContainer.classList.toggle('expanded');
     expandIcon.classList.toggle('expanded');
     sidePanel.classList.toggle('expanded');
   });
-
-  const fileNameElem = document.createElement('h3');
-  fileNameElem.textContent = fileName;
-  fileContainer.appendChild(fileNameElem);
 
   const fileContentsElem = document.createElement('pre');
   fileContentsElem.className = 'file-contents';
