@@ -2,6 +2,8 @@
 
 ![demo](demo.gif)
 
+[See more in Loom](https://www.loom.com/share/7eba26a678fe43c69a75021f1bb1fb82)
+
 The Revwr is a Chrome extension that provides an interactive chat interface for users to get explanations for code differences (diffs) within a codebase during a pull request review on GitHub. The extension allows users to select specific lines or an entire file to receive explanations, making it easier to understand changes in the code. The extension communicates with a server component, which uses OpenAI's GPT-3.5 Turbo model to generate responses based on the user's queries.
 
 ## Features
