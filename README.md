@@ -41,7 +41,10 @@ PORT=3000
 NODE_ENV=test
 ```
 
-Replace `your_openai_api_key_here` with your actual OpenAI API key. The `NODE_ENV` variable can be set to `test` for test mode or left unset for normal operation. 5. In the `chrome_extension` folder, locate the `submitChat()` function in the `js/chat.js` file and update the server URL (currently `http://localhost:3000/review`) to match your server's address and port, if necessary. 6. Start the server by running `node server.js` from the `server` folder. The server should now be running and ready to process chat requests from the extension.
+Replace `your_openai_api_key_here` with your actual OpenAI API key. The `NODE_ENV` variable can be set to `test` for test mode or left unset for normal operation. 
+
+5. In the `chrome_extension` folder, locate the `submitChat()` function in the `js/chat.js` file and update the server URL (currently `http://localhost:3000/review`) to match your server's address and port, if necessary. 
+6. Start the server by running `node server.js` from the `server` folder. The server should now be running and ready to process chat requests from the extension.
 With both the Chrome extension and server component set up, the Code Review Assistant is ready to use on GitHub pull requests.
 
 ## How to Use the Revwr Extension
