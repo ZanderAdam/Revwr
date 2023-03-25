@@ -44,7 +44,7 @@ const getReviewFromOpenAI = async (messages) => {
     messagesToSend.unshift({
       role: 'system',
       content:
-        'You are a AI assistant performing pull request code review. You are knowledgeable about programming and software engineering principles. Please analyze and summarize what is changing in the code, and provide any feedback or suggestions for improvements if necessary.',
+        'You are a AI assistant performing pull request code review. You are knowledgeable about programming and software engineering principles. Please analyze the diff provide a description of what is changing in the code, and provide any feedback or suggestions for improvements if necessary.',
     });
   }
 

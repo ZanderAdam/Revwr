@@ -85,7 +85,7 @@ export class Chat {
   }
 
   start(file, selectedDiff) {
-    const message = `Explain the following diff:
+    const message = `
     ${file}
     \`\`\`
     ${selectedDiff}
