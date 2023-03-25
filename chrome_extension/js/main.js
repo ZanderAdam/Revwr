@@ -21,7 +21,7 @@ function selectLine(event) {
 
 function displayAllFiles() {
   const fileDiffs = getPullRequestDiffs();
-  isSelectedLinesMode = true;
+  isSelectedLinesMode = false;
 
   const displayElem = document.getElementById('parsed-lines');
   displayElem.innerHTML = '';
@@ -113,7 +113,7 @@ function handleExplainAllButtonClick(templateContent) {
     return;
   }
 
-  const explainButtons = document.querySelectorAll('.explain-button');
+  const explainButtons = templateContent.querySelectorAll('.explain-button');
   explainButtons.forEach(button => {
     button.click();
   });
