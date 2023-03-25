@@ -10,72 +10,72 @@
  * @author Zeno Rocha <hi@zenorocha.com>
  */
 
- .hljs {
+#revwr .hljs {
   display: block;
   overflow-x: auto;
   padding: 0.5em;
   background: #282a36;
 }
 
-.hljs-built_in,
-.hljs-selector-tag,
-.hljs-section,
-.hljs-link {
+#revwr .hljs-built_in,
+#revwr .hljs-selector-tag,
+#revwr .hljs-section,
+#revwr .hljs-link {
   color: #8be9fd;
 }
 
-.hljs-keyword {
+#revwr .hljs-keyword {
   color: #ff79c6;
 }
 
-.hljs,
-.hljs-subst {
+#revwr .hljs,
+#revwr .hljs-subst {
   color: #f8f8f2;
 }
 
-.hljs-title,
-.hljs-attr,
-.hljs-meta-keyword {
+#revwr .hljs-title,
+#revwr .hljs-attr,
+#revwr .hljs-meta-keyword {
   font-style: italic;
   color: #50fa7b;
 }
 
-.hljs-string,
-.hljs-meta,
-.hljs-name,
-.hljs-type,
-.hljs-symbol,
-.hljs-bullet,
-.hljs-addition,
-.hljs-variable,
-.hljs-template-tag,
-.hljs-template-variable {
+#revwr .hljs-string,
+#revwr .hljs-meta,
+#revwr .hljs-name,
+#revwr .hljs-type,
+#revwr .hljs-symbol,
+#revwr .hljs-bullet,
+#revwr .hljs-addition,
+#revwr .hljs-variable,
+#revwr .hljs-template-tag,
+#revwr .hljs-template-variable {
   color: #f1fa8c;
 }
 
-.hljs-comment,
-.hljs-quote,
-.hljs-deletion {
+#revwr .hljs-comment,
+#revwr .hljs-quote,
+#revwr .hljs-deletion {
   color: #6272a4;
 }
 
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal,
-.hljs-title,
-.hljs-section,
-.hljs-doctag,
-.hljs-type,
-.hljs-name,
-.hljs-strong {
+#revwr .hljs-keyword,
+#revwr .hljs-selector-tag,
+#revwr .hljs-literal,
+#revwr .hljs-title,
+#revwr .hljs-section,
+#revwr .hljs-doctag,
+#revwr .hljs-type,
+#revwr .hljs-name,
+#revwr .hljs-strong {
   font-weight: bold;
 }
 
-.hljs-literal,
-.hljs-number {
+#revwr .hljs-literal,
+#revwr .hljs-number {
   color: #bd93f9;
 }
 
-.hljs-emphasis {
+#revwr .hljs-emphasis {
   font-style: italic;
 }
