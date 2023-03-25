@@ -204,11 +204,16 @@
 
 #revwr .chat-messages {
   min-height: 200px;
+  max-height: 200px;
   overflow-y: auto;
   padding: 10px;
   background-color: #3e3e3e;
   border-radius: 4px;
   flex: 1;
+}
+
+#revwr .file-container.expanded .chat-messages {
+  max-height: initial;
 }
 
 #revwr #chat-form {
@@ -278,6 +283,6 @@
   padding: 5px;
 }
 
-#revwr .expand-icon.expanded {
+#revwr .file-container.expanded .expand-icon {
   transform: rotate(-90deg);
 }
