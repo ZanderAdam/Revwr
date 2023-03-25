@@ -63,7 +63,7 @@ export class Chat {
   createMessage(role, content) {
     const messageElem = document.createElement('div');
     messageElem.classList.add(...['message', `${role}-message`]);
-    messageElem.textContent = content;
+    messageElem.innerHTML = marked.parse(content);
     this.chatMessages.appendChild(messageElem);
 
     this.chatMessages.scrollTop = this.chatMessages.scrollHeight;

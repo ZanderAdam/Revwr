@@ -22,10 +22,13 @@
         "http://localhost:3000/*"
       ],
       "js": [
-        "content_script.js"
+        "content_script.js",
+        "vendor/marked.min.js",
+        "vendor/highlight.min.js"
       ],
       "css": [
-        "app.css"
+        "app.css",
+        "vendor/highlight.min.css"
       ]
     }
   ],

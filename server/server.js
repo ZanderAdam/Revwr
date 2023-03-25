@@ -31,7 +31,7 @@ const testReview = async () => {
   await new Promise((r) => setTimeout(r, 3000));
   return {
     role: 'assistant',
-    content: `The above code change introduces a new function called 'calculateTotal' which takes two arguments, 'price' and 'quantity'. It multiplies the 'price' by the 'quantity' to calculate the total cost of an item and returns the result. This function is particularly useful in scenarios where you need to calculate the total cost of multiple items, such as in an e-commerce application.`,
+    content: `The above code change introduces a new function called \`calculateTotal\` which takes two arguments, \`price\` and \`quantity\`. It multiplies the 'price' by the 'quantity' to calculate the total cost of an item and returns the result. This function is particularly useful in scenarios where you need to calculate the total cost of multiple items, such as in an e-commerce application.`,
   };
 };
 

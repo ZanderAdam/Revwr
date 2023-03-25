@@ -70,7 +70,7 @@ function createFileContents(fileName, selectedDiff, parentElem, hideContents = t
 
   const fileContentsElem = document.createElement('pre');
   fileContentsElem.className = 'file-contents';
-  fileContentsElem.textContent = selectedDiff;
+  fileContentsElem.innerHTML = hljs.highlightAuto(selectedDiff).value;
 
   if (hideContents)
     fileContentsElem.style.display = 'none';
@@ -248,6 +248,14 @@ function handleMouseUp() {
 }
 
 export function main() {
+  marked.setOptions({
+    renderer: new marked.Renderer(),
+    highlight: function (code) {
+      return hljs.highlightAuto(code).value;
+    },
+    langPrefix: 'hljs language-'
+  });
+
   console.log("main");
   chrome.runtime.onMessage.addListener(handleRequest);
 
