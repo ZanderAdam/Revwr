@@ -19,7 +19,7 @@ app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', 'https://github.com');
     res.header(
       'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept'
+      'Origin, X-Requested-With, Content-Type, Accept',
     );
     next();
   } else {
@@ -40,13 +40,11 @@ const getReviewFromOpenAI = async (messages) => {
 
   const messagesToSend = messages;
 
-  if (messagesToSend.length === 1) {
-    messagesToSend.unshift({
-      role: 'system',
-      content:
-        'You are a AI assistant performing pull request code review. You are knowledgeable about programming and software engineering principles. Please analyze the diff provide a description of what is changing in the code, and provide any feedback or suggestions for improvements if necessary.',
-    });
-  }
+  messagesToSend.unshift({
+    role: 'system',
+    content:
+      'You are a AI assistant performing pull request code review. You are knowledgeable about programming and software engineering principles. Please analyze the diff, provide a description of what is changing in the code, and provide any feedback or suggestions for improvements if necessary.',
+  });
 
   const response = await openai.createChatCompletion({
     model: 'gpt-3.5-turbo',

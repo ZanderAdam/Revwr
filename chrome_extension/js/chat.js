@@ -7,6 +7,8 @@ export class Chat {
     this.messages = [];
   }
 
+  maxMessages = 5;
+
   createChatMessagesContainer() {
     const chatMessages = document.createElement('div');
     chatMessages.className = 'chat-messages';
@@ -99,13 +101,29 @@ export class Chat {
     const chatForm = this.chatForm.cloneNode(true);
     this.#showSpinner(this.chatForm);
 
+    const messagesToSend = [this.messages[0]];
+
+    //only add if exists
+    if (this.messages.length > 1) {
+      messagesToSend.push(this.messages[1]);
+    }
+
+    const latestMessages = this.messages.slice(
+      this.messages.length - this.maxMessages,
+    );
+
+    //add lastMessages to messagesToSend
+    latestMessages.forEach((message) => {
+      messagesToSend.push(message);
+    });
+
     return fetch('http://localhost:3000/review', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        messages: this.messages,
+        messages: messagesToSend,
       }),
     })
       .then((response) => response.json())
